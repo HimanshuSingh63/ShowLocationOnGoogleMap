@@ -1,0 +1,18 @@
+// This class is declared as public and uses the 'with sharing' keyword to enforce the sharing rules of the current user
+public with sharing class getFriendLocation {
+    // The @AuraEnabled annotation makes this method accessible from Lightning components
+    @AuraEnabled
+    // This method takes a record ID as a parameter and returns a list of Friend__c records
+    public static List<Friend__c> getLoacation(String rcId){
+        try {
+            // A SOQL query is used to fetch the Friend__c records with the specified record ID
+            List<Friend__c>fList=[SELECT Home_Town__c FROM Friend__c WHERE id=:rcId];
+            // The fetched records are returned
+            return fList;
+            
+        } catch (Exception e) {
+            // If an exception occurs, it's caught and rethrown as an AuraHandledException with the original exception's message
+            throw new AuraHandledException(e.getMessage());
+        }
+    }
+}
