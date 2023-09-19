@@ -1,0 +1,37 @@
+// Import necessary modules from the lwc library and the getFriendLocation Apex class
+import { LightningElement, api, track } from 'lwc';
+import getLoacation from '@salesforce/apex/getFriendLocation.getLoacation';
+
+// Define the LocationViwer class which extends the LightningElement base class
+export default class LocationViwer extends LightningElement {
+    @api recordId; // Public property to hold the record ID
+    @track CityOfFriend; // Tracked property to hold the friend's city
+    error; // Property to hold any errors
+    mapMarkers; // Property to hold the map markers
+    
+    // Lifecycle hook which fires when a component is inserted into the DOM
+    connectedCallback(){
+        console.log('Record id:', this.recordId); // Log the record ID
+
+        // Call the getLoacation function from the Apex class with the record ID as a parameter
+        getLoacation({rcId: this.recordId})
+        .then(result => { // Handle the Promise resolution
+            console.log(result); // Log the result
+            this.CityOfFriend = result[0].Home_Town__c; // Assign the friend's city to CityOfFriend
+            console.log('@@@@CityOfFriend:', this.CityOfFriend);    
+
+            // Define mapMarkers with the friend's city as a location
+            this.mapMarkers = [{
+                location: {
+                    City: this.CityOfFriend, 
+                },
+            }];
+        })
+        .catch(error => { // Handle any errors
+            this.error = error; // Assign the error to the error property
+        })
+    }
+
+    zoomLevel = 15; // Set the zoom level for the map
+    listView = 'visible'; // Set the list view for the map to visible
+}
